@@ -1,0 +1,447 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pushingSecurity — the secure client surface for Pushing Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ════ pushingSecurity — proposed marketing site ════════════════════════
+     COPY: newly written. Every capability, price and figure below was
+           observed in the live app at pushingsecurity.pushingcap.com.
+           Nothing about certification, uptime or customer numbers is claimed,
+           because none was available to verify.
+     DESIGN: same tokens and type as the pushingCapital redesign, so the two
+           read as one house. Accent leans gold here — this is the trust arm.
+     ══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --bg:#020403; --soft:#070b0a; --text:#f6f7f4;
+    --muted:#a2aaa3; --dim:#6d756f;
+    --mint:#82e6c6; --gold:#d7bc73;
+    --line:rgba(246,247,244,.13);
+    --gut:clamp(22px,4.4vw,64px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);
+       font-family:Geist,system-ui,-apple-system,sans-serif;
+       -webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .mono{font-family:"Geist Mono",ui-monospace,monospace;}
+  em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+     font-weight:400;letter-spacing:-.005em;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;
+      justify-content:space-between;align-items:center;
+      padding:20px var(--gut);transition:background .3s,backdrop-filter .3s;}
+  nav.stuck{background:rgba(2,4,3,.78);backdrop-filter:blur(14px);
+            border-bottom:1px solid var(--line);}
+  .lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);}
+  .wm{font-size:15.5px;font-weight:700;letter-spacing:-.012em;}
+  .wm span{color:var(--gold);font-weight:400;}
+  .navlinks{display:flex;gap:28px;font-size:12px;}
+  .navlinks a{color:var(--text);text-decoration:none;opacity:.7;transition:opacity .2s;}
+  .navlinks a:hover{opacity:1;}
+  .navlinks a.acc{color:var(--gold);opacity:.9;}
+
+  .hero{position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:center;}
+  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .hero .veil{position:absolute;inset:0;
+    background:
+      linear-gradient(to right, rgba(2,4,3,.90) 0%, rgba(2,4,3,.70) 32%, rgba(2,4,3,.24) 60%, rgba(2,4,3,0) 80%),
+      linear-gradient(to bottom, rgba(2,4,3,.84), transparent 20%, transparent 60%, var(--bg));}
+  .hero .inner{position:relative;z-index:2;padding:0 var(--gut);max-width:1440px;
+               margin:0 auto;width:100%;}
+  .kicker{font-size:10.5px;letter-spacing:.36em;text-transform:uppercase;
+          color:var(--gold);margin-bottom:28px;}
+  h1{font-size:clamp(38px,6.2vw,92px);line-height:.98;letter-spacing:-.038em;
+     font-weight:500;max-width:15ch;}
+  .sub{margin-top:28px;font-size:clamp(14.5px,1.35vw,18px);line-height:1.58;
+       color:var(--muted);max-width:50ch;font-weight:300;}
+  .pillars{margin-top:46px;display:flex;flex-wrap:wrap;
+           border-top:1px solid var(--line);max-width:680px;}
+  .pillars div{flex:1 1 0;min-width:160px;padding:16px 18px 0 0;
+               font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+               color:var(--dim);position:relative;}
+  .pillars div::before{content:"";position:absolute;top:-1px;left:0;width:0;height:1px;
+                       background:var(--gold);transition:width .9s ease;}
+  .hero.in .pillars div::before{width:82%;}
+  .hero.in .pillars div:nth-child(2)::before{transition-delay:.18s;}
+  .hero.in .pillars div:nth-child(3)::before{transition-delay:.36s;}
+
+  section{padding:clamp(80px,10vw,140px) var(--gut);max-width:1440px;margin:0 auto;}
+  .eyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+           color:var(--dim);margin-bottom:34px;display:flex;align-items:center;gap:14px;}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line);}
+  h2{font-size:clamp(28px,4.2vw,60px);line-height:1.06;letter-spacing:-.036em;
+     font-weight:500;max-width:19ch;}
+  .body{font-size:clamp(15px,1.32vw,18.5px);line-height:1.62;color:var(--muted);
+        max-width:56ch;font-weight:300;}
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,86px);
+         align-items:end;}
+  .split .body{padding-bottom:.4em;}
+
+  .rv{opacity:0;transform:translateY(22px);
+      transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+
+  .bordered{border-top:1px solid var(--line);}
+
+  /* record grid */
+  .cards{margin-top:56px;display:grid;grid-template-columns:repeat(4,1fr);
+         gap:1px;background:var(--line);border:1px solid var(--line);}
+  .cell{background:var(--bg);padding:28px 24px 34px;transition:background .3s;
+        min-height:190px;}
+  .cell:hover{background:var(--soft);}
+  .cell .n{font-size:10px;letter-spacing:.2em;color:var(--gold);}
+  .cell h3{margin-top:20px;font-size:17.5px;font-weight:500;letter-spacing:-.018em;}
+  .cell p{margin-top:10px;font-size:13px;line-height:1.6;color:var(--muted);font-weight:300;}
+
+  /* vault metrics */
+  .metrics{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);
+           gap:clamp(16px,2vw,28px);}
+  .metric{border:1px solid var(--line);padding:26px 24px 30px;background:var(--soft);}
+  .metric .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);}
+  .metric .v{margin-top:16px;font-size:clamp(20px,2.2vw,30px);font-weight:500;
+             letter-spacing:-.024em;}
+  .metric p{margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--muted);font-weight:300;}
+
+  /* P / pricing */
+  .tiers{margin-top:52px;display:grid;grid-template-columns:repeat(2,1fr);
+         gap:clamp(16px,2vw,28px);}
+  .tier{border:1px solid var(--line);padding:30px 28px 34px;background:var(--soft);
+        display:flex;flex-direction:column;}
+  .tier.pro{border-color:rgba(215,188,115,.34);}
+  .tier .k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);}
+  .tier.pro .k{color:var(--gold);}
+  .tier h3{margin-top:16px;font-size:22px;font-weight:500;letter-spacing:-.022em;}
+  .tier ul{margin-top:20px;list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .tier li{font-size:13.5px;line-height:1.5;color:var(--muted);font-weight:300;
+           padding-left:18px;position:relative;}
+  .tier li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:1px;
+                   background:var(--dim);}
+  .tier.pro li::before{background:var(--gold);}
+  .packs{margin-top:34px;display:flex;gap:10px;flex-wrap:wrap;}
+  .pack{border:1px solid var(--line);padding:12px 16px;font-size:12px;
+        display:flex;flex-direction:column;gap:4px;min-width:118px;}
+  .pack b{font-size:16px;font-weight:500;letter-spacing:-.01em;}
+  .pack span{color:var(--dim);font-size:10.5px;letter-spacing:.1em;}
+  .costs{margin-top:26px;font-size:12.5px;line-height:1.9;color:var(--dim);}
+  .costs b{color:var(--muted);font-weight:400;}
+
+  /* deals rail */
+  .rail{margin-top:56px;display:grid;grid-template-columns:repeat(5,1fr);
+        position:relative;padding-top:30px;gap:14px;}
+  .rail::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);}
+  .rail::after{content:"";position:absolute;top:0;left:0;height:1px;width:0;
+               background:var(--gold);transition:width 1.8s cubic-bezier(.2,.7,.2,1);}
+  .rail.in::after{width:100%;}
+  .rail div{position:relative;font-size:clamp(13px,1.15vw,15.5px);font-weight:500;
+            letter-spacing:-.012em;color:var(--muted);transition:color .5s;}
+  .rail.in div{color:var(--text);}
+  .rail div::before{content:"";position:absolute;top:-30px;left:0;width:6px;height:6px;
+                    border-radius:50%;background:var(--dim);transform:translateY(-2.5px);
+                    transition:background .5s;}
+  .rail.in div::before{background:var(--gold);}
+  .rail div small{display:block;margin-top:8px;font-size:12px;line-height:1.55;
+                  color:var(--muted);font-weight:300;letter-spacing:0;}
+
+  /* services */
+  .counts{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);
+          gap:1px;background:var(--line);border:1px solid var(--line);}
+  .count{background:var(--bg);padding:30px 26px 34px;}
+  .count b{display:block;font-size:clamp(30px,3.6vw,50px);font-weight:500;
+           letter-spacing:-.04em;}
+  .count span{display:block;margin-top:8px;font-size:10.5px;letter-spacing:.2em;
+              text-transform:uppercase;color:var(--gold);}
+  .count p{margin-top:12px;font-size:13px;line-height:1.6;color:var(--muted);font-weight:300;}
+  .examples{margin-top:34px;display:grid;grid-template-columns:repeat(2,1fr);
+            gap:1px;background:var(--line);border:1px solid var(--line);}
+  .ex{background:var(--bg);padding:20px 24px;display:flex;justify-content:space-between;
+      align-items:baseline;gap:18px;}
+  .ex span{font-size:14px;font-weight:400;}
+  .ex b{font-weight:500;font-size:13.5px;color:var(--gold);white-space:nowrap;}
+
+  /* trust */
+  .trust{position:relative;overflow:hidden;}
+  .trust .grid{position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                     linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:74px 74px;
+    -webkit-mask-image:radial-gradient(62% 72% at 80% 50%,#000,transparent 72%);
+            mask-image:radial-gradient(62% 72% at 80% 50%,#000,transparent 72%);}
+  .trust .inner{position:relative;z-index:2;}
+  .trustlist{margin-top:44px;display:grid;grid-template-columns:repeat(2,1fr);
+             gap:26px 48px;max-width:960px;}
+  .trustlist div{border-top:1px solid var(--line);padding-top:16px;}
+  .trustlist h4{font-size:14.5px;font-weight:500;letter-spacing:-.012em;}
+  .trustlist p{margin-top:8px;font-size:13px;line-height:1.6;color:var(--muted);font-weight:300;}
+
+  .close{text-align:center;border-top:1px solid var(--line);
+         padding:clamp(88px,11vw,140px) var(--gut) clamp(70px,8vw,110px);}
+  .close h2{max-width:22ch;margin:0 auto;}
+  .close .body{margin:26px auto 0;text-align:center;}
+  .cta{margin-top:38px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:2px;
+       font-size:13px;font-weight:500;text-decoration:none;background:var(--gold);
+       color:#171205;transition:transform .18s;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);}
+  .btn.ghost:hover{border-color:var(--gold);}
+
+  footer{border-top:1px solid var(--line);padding:26px var(--gut);
+         display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+         font-size:11px;color:var(--dim);}
+  footer a{color:var(--dim);text-decoration:none;}
+  footer a:hover{color:var(--gold);}
+
+  @media(max-width:1000px){ .cards{grid-template-columns:repeat(2,1fr);} .rail{grid-template-columns:repeat(2,1fr);row-gap:30px;} }
+  @media(max-width:900px){
+    .navlinks{display:none;}
+    .split{grid-template-columns:1fr;gap:26px;align-items:start;}
+    .split .body{padding-bottom:0;}
+    .metrics,.tiers,.counts,.examples,.trustlist{grid-template-columns:1fr;}
+    .pillars div{flex:1 1 100%;}
+    .hero .veil{background:
+      linear-gradient(to bottom, rgba(2,4,3,.92) 0%, rgba(2,4,3,.58) 34%,
+                      rgba(2,4,3,.74) 74%, var(--bg) 100%),
+      linear-gradient(rgba(2,4,3,.30), rgba(2,4,3,.30));}
+  }
+  @media(prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important;} .rv{opacity:1;transform:none;} }
+</style>
+
+<nav id="nav">
+  <a class="lockup" href="#top">
+    <svg viewBox="0 0 32 32" fill="none" style="width:20px;height:20px" aria-hidden="true">
+      <rect x="3"  y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".45"/>
+      <rect x="10" y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".65"/>
+      <rect x="17" y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".85"/>
+      <rect x="24" y="4"  width="3.6" height="24" rx="1.2" fill="#d7bc73"/>
+    </svg><span class="wm">pushing<span>Security</span></span>
+  </a>
+  <div class="navlinks">
+    <a href="#record">The record</a>
+    <a href="#vault">The vault</a>
+    <a href="#p">P</a>
+    <a href="#services">Services</a>
+    <a class="acc" href="https://pushingsecurity.pushingcap.com/">Sign in</a>
+  </div>
+</nav>
+
+<div class="hero" id="top">
+  <video src="media/hero-flight.mp4" poster="media/hero-flight-poster.jpg"
+         autoplay muted loop playsinline preload="auto"></video>
+  <div class="veil"></div>
+  <div class="inner">
+    <div class="kicker mono rv">The secure client surface</div>
+    <h1 class="rv">Your whole file in one place, <em>and someone who has read it.</em></h1>
+    <p class="sub rv">pushingSecurity turns scattered documents, income and credit into a single
+       verified record — held in an encrypted vault you control, worked by your Pushing Capital
+       team, and answered around the clock by P.</p>
+    <div class="pillars mono rv">
+      <div>End-to-end encrypted</div>
+      <div>Verified by your team</div>
+      <div>Answering at 3am</div>
+    </div>
+  </div>
+</div>
+
+<section class="bordered" id="thesis">
+  <div class="eyebrow mono rv">Why it exists</div>
+  <div class="split">
+    <h2 class="rv">Nobody loses a deal on the paperwork. <em>They lose it on the wait.</em></h2>
+    <p class="body rv">The file sits in six inboxes. The lender wants one more statement. Nobody can
+       say what is outstanding without asking three people, and by the time the answer comes back the
+       window has moved. pushingSecurity closes that gap: one record, one place to see it, and one
+       thing you can ask at any hour.</p>
+  </div>
+</section>
+
+<section class="bordered" id="record">
+  <div class="eyebrow mono rv">The Golden Record</div>
+  <div class="split">
+    <h2 class="rv">Assembled once. <em>Used everywhere.</em></h2>
+    <p class="body rv">Everything that decides whether you are fundable, resolved into one profile —
+       so it never has to be gathered twice, and every lender sees the same version of you.</p>
+  </div>
+  <div class="cards rv">
+    <div class="cell"><div class="n mono">01</div><h3>Documents</h3>
+      <p>Upload or sign, and the file is read, classified and filed against the right deal automatically.</p></div>
+    <div class="cell"><div class="n mono">02</div><h3>Verified income</h3>
+      <p>Pay stubs, returns and statements become qualifying monthly income — including rental, gig and side-business income, checked before it counts.</p></div>
+    <div class="cell"><div class="n mono">03</div><h3>Credit on file</h3>
+      <p>Three-bureau scores and report data held with your file, pulled as part of Discovery.</p></div>
+    <div class="cell"><div class="n mono">04</div><h3>Assets</h3>
+      <p>Vehicles, property equity and connected accounting — the collateral side of the picture, kept current.</p></div>
+  </div>
+</section>
+
+<section class="bordered" id="vault">
+  <div class="eyebrow mono rv">The Sovereign Vault</div>
+  <div class="split">
+    <h2 class="rv">Your data is an asset. <em>Not an exposure.</em></h2>
+    <p class="body rv">The vault is end-to-end encrypted. Documents are extracted into structured
+       fields the moment they land. Lender-portal credentials are stored under your control rather
+       than in somebody's notes app.</p>
+  </div>
+  <div class="metrics rv">
+    <div class="metric"><div class="k mono">Sovereign score</div>
+      <div class="v">How complete you are</div>
+      <p>How much of your record is present, verified and current.</p></div>
+    <div class="metric"><div class="k mono">RDS score</div>
+      <div class="v">How ready you are</div>
+      <p>Readiness, read the way a lender reads it — before you apply, not after.</p></div>
+    <div class="metric"><div class="k mono">DTI ratio</div>
+      <div class="v">What you can carry</div>
+      <p>Debt against verified income, recalculated as the file changes.</p></div>
+  </div>
+</section>
+
+<section class="bordered" id="p">
+  <div class="eyebrow mono rv">P, your concierge</div>
+  <div class="split">
+    <h2 class="rv">Ask the file anything. <em>It has already read itself.</em></h2>
+    <p class="body rv">P sits on top of the record — your documents, scores, deals and the service
+       catalogue. Ask where the loan is, what is still outstanding, or to book a call, and P does it.
+       Everyday questions cost nothing.</p>
+  </div>
+  <div class="tiers rv">
+    <div class="tier">
+      <div class="k mono">Free</div>
+      <h3>Everyday answers</h3>
+      <ul>
+        <li>Chat with P, up to 15 messages a day</li>
+        <li>Look up your scores, deals and documents</li>
+        <li>Search the service catalogue and playbooks</li>
+      </ul>
+    </div>
+    <div class="tier pro">
+      <div class="k mono">Pro · paid in credits</div>
+      <h3>Put P to work</h3>
+      <ul>
+        <li>Everything in Free, with no daily cap</li>
+        <li>Deep research across the web</li>
+        <li>Documents generated straight into your file</li>
+        <li>Attach and work with files in chat</li>
+      </ul>
+      <div class="packs mono">
+        <div class="pack"><b>$10</b><span>100 credits</span></div>
+        <div class="pack"><b>$25</b><span>300 · +20%</span></div>
+        <div class="pack"><b>$50</b><span>750 · +50%</span></div>
+      </div>
+      <div class="costs mono">
+        <b>1</b> credit a message · <b>10</b> deep research · <b>8</b> document generation<br>
+        Credits never expire. Run out and you drop back to Free — never locked out.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bordered" id="deals">
+  <div class="eyebrow mono rv">Deals</div>
+  <div class="split">
+    <h2 class="rv">Where you stand, <em>without having to ask.</em></h2>
+    <p class="body rv">Every deal and loan in progress, what is outstanding on your side, what the
+       team is doing on theirs, and the money — all on one screen, updated as it happens.</p>
+  </div>
+  <div class="rail" id="rail">
+    <div>Where you stand<small>Live status of every deal and loan.</small></div>
+    <div>What we need<small>Your outstanding items, in one list.</small></div>
+    <div>Work in progress<small>What the team and P are doing now.</small></div>
+    <div>Your requests<small>Everything you asked for, and where it is.</small></div>
+    <div>Billing<small>Invoices, quotes, history, anything due.</small></div>
+  </div>
+</section>
+
+<section class="bordered" id="services">
+  <div class="eyebrow mono rv">Services</div>
+  <div class="split">
+    <h2 class="rv">Or simply <em>hand it over.</em></h2>
+    <p class="body rv">Anything on your file can become a job for the team. Buy it outright at a
+       published price, or ask and get a quote — inspections, valuations, title work, full deal
+       jackets, even a dealer licence.</p>
+  </div>
+  <div class="counts rv">
+    <div class="count"><b>60</b><span class="mono">Services</span>
+      <p>One-time professional work, priced up front.</p></div>
+    <div class="count"><b>17</b><span class="mono">Subscriptions</span>
+      <p>Ongoing monthly plans for operators running volume.</p></div>
+    <div class="count"><b>12</b><span class="mono">Add-ons</span>
+      <p>Top-ups, credits and course access.</p></div>
+  </div>
+  <div class="examples rv">
+    <div class="ex"><span>Private party sale, basic</span><b>$150</b></div>
+    <div class="ex"><span>Private party sale, with lien payoff</span><b>$250</b></div>
+    <div class="ex"><span>Private party sale, full service</span><b>$450</b></div>
+    <div class="ex"><span>Dealer deal jacket, by buyer FICO</span><b>$350 – $500</b></div>
+    <div class="ex"><span>Inspection or market valuation</span><b>On request</b></div>
+    <div class="ex"><span>CA wholesale or Oregon dealer licence</span><b>Quoted</b></div>
+  </div>
+</section>
+
+<section class="bordered trust" id="trust">
+  <div class="grid"></div>
+  <div class="inner">
+    <div class="eyebrow mono rv">Trust</div>
+    <div class="split">
+      <h2 class="rv">Protected by code, <em>not promises.</em></h2>
+      <p class="body rv">A client portal holds the most sensitive file a person has. That is a
+         design constraint, not a marketing line — so the vault is encrypted end to end, access is
+         bounded, and payments never touch our systems.</p>
+    </div>
+    <div class="trustlist rv">
+      <div><h4>End-to-end encrypted store</h4>
+        <p>Documents and extracted fields are encrypted in the vault, not scattered across inboxes and chat threads.</p></div>
+      <div><h4>Payments handled by Stripe</h4>
+        <p>Card details go to Stripe's secure checkout. Your account never holds them.</p></div>
+      <div><h4>Credentials under your control</h4>
+        <p>Connected lender portals are stored through the vault's integrations, revocable by you.</p></div>
+      <div><h4>Judgement stays human</h4>
+        <p>P drafts and gathers. Readiness verdicts and lender matches are finalised by your team before you see them.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="close">
+  <div class="eyebrow mono rv" style="justify-content:center;">Access</div>
+  <h2 class="rv">There is nothing artificial <em>about intelligence.</em></h2>
+  <p class="body rv">pushingSecurity is issued to Pushing Capital clients. If you are already working
+     with us, your surface is waiting.</p>
+  <div class="cta rv">
+    <a class="btn" href="https://pushingsecurity.pushingcap.com/">Sign in →</a>
+    <a class="btn ghost" href="mailto:socialmedia@pushingcap.com">Request access</a>
+  </div>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:9px;">
+    <svg viewBox="0 0 32 32" fill="none" style="width:14px;height:14px">
+      <rect x="3" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="10" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="17" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="24" y="4" width="3.6" height="24" rx="1.2" fill="#d7bc73"/>
+    </svg>pushingSecurity — a Pushing Capital surface © 2026
+  </div>
+  <div class="mono">Laguna Beach, CA · <a href="mailto:socialmedia@pushingcap.com">socialmedia@pushingcap.com</a></div>
+</footer>
+
+<script>
+  (function(){
+    var v = document.querySelector('.hero video'); if(!v) return;
+    function go(){ var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+    go();
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
+    ['pointerdown','keydown','scroll'].forEach(function(e){
+      window.addEventListener(e, go, {once:true, passive:true});
+    });
+  })();
+  (function(){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:.15, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv, .rail, .hero').forEach(function(el){ io.observe(el); });
+  })();
+  (function(){
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function(){ nav.classList.toggle('stuck', window.scrollY > 40); }, {passive:true});
+  })();
+</script>
