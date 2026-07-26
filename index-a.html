@@ -1,0 +1,347 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pushingCapital | Strategic Operating Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ════ pushingCapital — proposed redesign ═══════════════════════════════
+     COPY: verbatim from pushingcapital.org. Not one word invented, added or
+           reworded. Section order and anchors match the live site.
+     PALETTE: their own tokens — #020403 · #f6f7f4 · mint #82e6c6 · gold #d7bc73
+     WHAT CHANGES: imagery, typography, structure, motion.
+     ══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --bg:#020403; --soft:#070b0a; --text:#f6f7f4;
+    --muted:#a2aaa3; --dim:#6d756f;
+    --mint:#82e6c6; --gold:#d7bc73;
+    --line:rgba(246,247,244,.13);
+    --gut:clamp(22px,4.4vw,64px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);
+       font-family:Geist,system-ui,-apple-system,sans-serif;
+       -webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .mono{font-family:"Geist Mono",ui-monospace,monospace;}
+  em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+     font-weight:400;letter-spacing:-.005em;}
+
+  /* ── nav ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;
+      justify-content:space-between;align-items:center;
+      padding:20px var(--gut);transition:background .3s,backdrop-filter .3s;}
+  nav.stuck{background:rgba(2,4,3,.78);backdrop-filter:blur(14px);
+            border-bottom:1px solid var(--line);}
+  .lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);}
+  .mark{width:20px;height:20px;display:block;}
+  .wm{font-size:15.5px;font-weight:700;letter-spacing:-.012em;}
+  .navlinks{display:flex;gap:28px;font-size:12px;letter-spacing:.015em;}
+  .navlinks a{color:var(--text);text-decoration:none;opacity:.7;transition:opacity .2s;}
+  .navlinks a:hover{opacity:1;}
+  .navlinks a.navcontact{color:var(--mint);opacity:.9;}
+
+  /* ── hero ── */
+  .hero{position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:center;}
+  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .hero .veil{position:absolute;inset:0;
+    background:
+      linear-gradient(to right, rgba(2,4,3,.90) 0%, rgba(2,4,3,.72) 30%, rgba(2,4,3,.28) 56%, rgba(2,4,3,0) 76%),
+      radial-gradient(95% 100% at 8% 50%, rgba(2,4,3,.78) 0%, rgba(2,4,3,.42) 38%, rgba(2,4,3,0) 72%),
+      linear-gradient(to bottom, rgba(2,4,3,.88), transparent 24%, transparent 66%, var(--bg));}
+  .hero .inner{position:relative;z-index:2;padding:0 var(--gut);
+               max-width:1440px;margin:0 auto;width:100%;}
+  .kicker{font-size:10.5px;letter-spacing:.36em;text-transform:uppercase;
+          color:var(--mint);margin-bottom:28px;}
+  h1{font-size:clamp(40px,6.6vw,98px);line-height:.97;letter-spacing:-.038em;
+     font-weight:500;max-width:14ch;}
+  .sub{margin-top:28px;font-size:clamp(14.5px,1.35vw,18px);line-height:1.58;
+       color:var(--muted);max-width:48ch;font-weight:300;}
+
+  /* their three hero phrases, as the readout strip */
+  .pillars{margin-top:46px;display:flex;gap:0;flex-wrap:wrap;
+           border-top:1px solid var(--line);max-width:640px;}
+  .pillars div{flex:1 1 0;min-width:150px;padding:16px 18px 0 0;
+               font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+               color:var(--dim);position:relative;}
+  .pillars div::before{content:"";position:absolute;top:-1px;left:0;width:0;height:1px;
+                       background:var(--mint);transition:width .9s ease;}
+  .hero.in .pillars div::before{width:82%;}
+  .hero.in .pillars div:nth-child(2)::before{transition-delay:.18s;}
+  .hero.in .pillars div:nth-child(3)::before{transition-delay:.36s;}
+
+  .scrollcue{position:absolute;left:var(--gut);bottom:34px;z-index:3;
+             font-size:9.5px;letter-spacing:.28em;color:var(--dim);
+             display:flex;align-items:center;gap:10px;}
+  .scrollcue i{display:block;width:34px;height:1px;background:var(--dim);
+               animation:cue 2.4s ease-in-out infinite;transform-origin:left;}
+  @keyframes cue{0%,100%{transform:scaleX(.35);opacity:.5}50%{transform:scaleX(1);opacity:1}}
+
+  /* ── shared section furniture ── */
+  section{padding:clamp(88px,11vw,150px) var(--gut);max-width:1440px;margin:0 auto;}
+  .eyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+           color:var(--dim);margin-bottom:34px;display:flex;align-items:center;gap:14px;}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line);}
+  h2{font-size:clamp(28px,4.3vw,62px);line-height:1.06;letter-spacing:-.036em;
+     font-weight:500;max-width:19ch;}
+  .body{font-size:clamp(15px,1.35vw,18.5px);line-height:1.62;
+        color:var(--muted);max-width:56ch;font-weight:300;}
+  /* headline left, body right — fills the measure instead of stranding it */
+  .split{display:grid;grid-template-columns:1.1fr .9fr;
+         gap:clamp(28px,5vw,86px);align-items:end;}
+  .split .body{padding-bottom:.4em;}
+
+  /* reveal on scroll */
+  .rv{opacity:0;transform:translateY(22px);
+      transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+
+  /* ── thesis ── */
+  .thesis{border-top:1px solid var(--line);}
+  .thesis h2{max-width:17ch;}
+  .thesis h2 em{color:var(--mint);}
+
+  /* ── systems ── */
+  .prods{margin-top:60px;display:grid;grid-template-columns:repeat(3,1fr);
+         gap:1px;background:var(--line);border:1px solid var(--line);}
+  .prod{background:var(--bg);padding:30px 28px 36px;position:relative;
+        transition:background .3s;min-height:210px;
+        display:flex;flex-direction:column;}
+  .prod:hover{background:var(--soft);}
+  .prod .n{font-size:10px;letter-spacing:.2em;color:var(--gold);}
+  .prod h3{margin-top:22px;font-size:clamp(18px,1.6vw,23px);font-weight:500;
+           letter-spacing:-.02em;}
+  .prod p{margin-top:12px;font-size:13.5px;line-height:1.62;color:var(--muted);
+          font-weight:300;}
+  .prod .bar{position:absolute;left:0;bottom:0;height:2px;width:0;
+             background:var(--mint);transition:width .45s cubic-bezier(.2,.7,.2,1);}
+  .prod:hover .bar{width:100%;}
+
+  /* ── method ── */
+  .method{border-top:1px solid var(--line);}
+  .rail{margin-top:64px;display:grid;grid-template-columns:repeat(4,1fr);
+        position:relative;padding-top:32px;}
+  .rail::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
+                background:var(--line);}
+  .rail::after{content:"";position:absolute;top:0;left:0;height:1px;width:0;
+               background:var(--mint);transition:width 1.6s cubic-bezier(.2,.7,.2,1);}
+  .rail.in::after{width:100%;}
+  .rail span{position:relative;font-size:clamp(17px,2.1vw,30px);font-weight:500;
+             letter-spacing:-.028em;color:var(--muted);transition:color .5s;}
+  .rail.in span{color:var(--text);}
+  .rail span::before{content:"";position:absolute;top:-32px;left:0;
+                     width:7px;height:7px;border-radius:50%;background:var(--dim);
+                     transform:translateY(-3px);transition:background .5s;}
+  .rail.in span::before{background:var(--mint);}
+  .rail.in span:nth-child(2){transition-delay:.3s}
+  .rail.in span:nth-child(3){transition-delay:.6s}
+  .rail.in span:nth-child(4){transition-delay:.9s}
+  .rail.in span:nth-child(2)::before{transition-delay:.3s}
+  .rail.in span:nth-child(3)::before{transition-delay:.6s}
+  .rail.in span:nth-child(4)::before{transition-delay:.9s}
+
+  /* ── trust ── */
+  .trust{border-top:1px solid var(--line);position:relative;overflow:hidden;}
+  .trust h2 em{color:var(--gold);}
+  .trust .grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                     linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:74px 74px;
+    -webkit-mask-image:radial-gradient(64% 74% at 82% 50%,#000,transparent 72%);
+            mask-image:radial-gradient(64% 74% at 82% 50%,#000,transparent 72%);}
+  .trust .inner{position:relative;z-index:2;}
+
+  /* ── contact ── */
+  .contact{text-align:center;border-top:1px solid var(--line);
+           padding:clamp(90px,11vw,140px) var(--gut) clamp(80px,9vw,120px);}
+  .contact .eyebrow{justify-content:center;}
+  .contact .eyebrow::after{display:none;}
+  .mailto{display:inline-block;margin-top:8px;
+          font-size:clamp(22px,3.4vw,44px);letter-spacing:-.032em;font-weight:500;
+          color:var(--text);text-decoration:none;
+          border-bottom:1px solid rgba(130,230,198,.35);padding-bottom:8px;
+          transition:color .25s,border-color .25s;}
+  .mailto:hover{color:var(--mint);border-color:var(--mint);}
+
+  /* ── footer ── */
+  footer{border-top:1px solid var(--line);padding:26px var(--gut);
+         display:flex;justify-content:space-between;align-items:center;gap:22px;
+         flex-wrap:wrap;font-size:11px;color:var(--dim);}
+  footer a{color:var(--dim);text-decoration:none;transition:color .2s;}
+  footer a:hover{color:var(--mint);}
+  .flinks{display:flex;gap:18px;flex-wrap:wrap;}
+
+  @media(max-width:900px){
+    .prods{grid-template-columns:1fr;}
+    .rail{grid-template-columns:repeat(2,1fr);row-gap:34px;}
+    .navlinks{display:none;}
+    /* narrow screens: the side-weighted scrim no longer lands under the copy,
+       so darken the whole frame instead */
+    .hero .veil{background:
+      linear-gradient(to bottom, rgba(2,4,3,.92) 0%, rgba(2,4,3,.58) 34%,
+                      rgba(2,4,3,.72) 74%, var(--bg) 100%),
+      linear-gradient(rgba(2,4,3,.34), rgba(2,4,3,.34));}
+    .split{grid-template-columns:1fr;gap:26px;align-items:start;}
+    .split .body{padding-bottom:0;}
+    .pillars div{flex:1 1 100%;padding-bottom:10px;}
+    footer{justify-content:flex-start;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+    .rv{opacity:1;transform:none;}
+  }
+</style>
+
+<nav id="nav">
+  <a class="lockup" href="#hero">
+    <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <rect x="3"  y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".45"/>
+      <rect x="10" y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".65"/>
+      <rect x="17" y="10" width="3.6" height="12" rx="1.2" fill="#f6f7f4" opacity=".85"/>
+      <rect x="24" y="4"  width="3.6" height="24" rx="1.2" fill="#82e6c6"/>
+    </svg><span class="wm">pushingCapital</span>
+  </a>
+  <div class="navlinks">
+    <a href="#mission">Thesis</a>
+    <a href="#products">Systems</a>
+    <a href="#technology">Method</a>
+    <a href="#security">Trust</a>
+    <a class="navcontact" href="mailto:socialmedia@pushingcap.com">Contact</a>
+  </div>
+</nav>
+
+<div class="hero" id="hero">
+  <video src="media/hero-control.mp4" poster="media/hero-control-poster.jpg"
+         autoplay muted loop playsinline preload="auto"></video>
+  <div class="veil"></div>
+  <div class="inner">
+    <div class="kicker mono rv">Strategic Operating Intelligence</div>
+    <h1 class="rv">Pressure becomes leverage when the system <em>can think.</em></h1>
+    <p class="sub rv">Pushing Capital builds private infrastructure for operators who need
+       institutional speed without institutional drag.</p>
+    <div class="pillars mono rv">
+      <div>Calm advantage</div>
+      <div>Truth under load</div>
+      <div>Execution memory</div>
+    </div>
+  </div>
+  <div class="scrollcue mono" aria-hidden="true"><i></i></div>
+</div>
+
+<section class="thesis" id="mission">
+  <div class="eyebrow mono rv">Market psychology</div>
+  <div class="split">
+    <h2 class="rv">The edge is not information. <em>It is composure at speed.</em></h2>
+    <p class="body rv">Most businesses drown in the gap between knowing and acting. Documents wait.
+       Deals stall. Teams repeat context. Decisions lose shape. We design systems that compress
+       that gap until judgment, data, and execution move as one.</p>
+  </div>
+</section>
+
+<section id="products">
+  <div class="eyebrow mono rv">Operating systems</div>
+  <h2 class="rv">Built where hesitation gets expensive.</h2>
+  <div class="prods rv">
+    <div class="prod"><div class="n mono">01</div><h3>userOne</h3>
+      <p>Dealership and workforce orchestration that keeps every sale, title, task, and handoff visible.</p>
+      <div class="bar"></div></div>
+    <div class="prod"><div class="n mono">02</div><h3>Spatial Inspections</h3>
+      <p>Visual evidence converted into fast, risk-aware underwriting and operational truth.</p>
+      <div class="bar"></div></div>
+    <div class="prod"><div class="n mono">03</div><h3>Heavy Doc Croc</h3>
+      <p>Complex paperwork routed into structured intelligence without waiting on manual review.</p>
+      <div class="bar"></div></div>
+    <div class="prod"><div class="n mono">04</div><h3>pushingTransport</h3>
+      <p>Vehicle movement, route pressure, and delivery state organized into one live execution plane.</p>
+      <div class="bar"></div></div>
+    <div class="prod"><div class="n mono">05</div><h3>pushingParts</h3>
+      <p>Parts sourcing and inventory control designed for confidence when the repair clock is running.</p>
+      <div class="bar"></div></div>
+    <div class="prod"><div class="n mono">06</div><h3>Custom Platforms</h3>
+      <p>Private software architecture for companies that need the machine to match the way they win.</p>
+      <div class="bar"></div></div>
+  </div>
+</section>
+
+<section class="method" id="technology">
+  <div class="eyebrow mono rv">Method</div>
+  <div class="split">
+    <h2 class="rv">We build for the moment <em>before the move.</em></h2>
+    <p class="body rv">The product is not a dashboard. It is a thinking environment: intake, memory,
+       reasoning, routing, and proof layered into the workflow so the next best action becomes
+       legible before the window closes.</p>
+  </div>
+  <div class="rail" id="rail">
+    <span>Sense</span><span>Structure</span><span>Decide</span><span>Move</span>
+  </div>
+</section>
+
+<section class="trust" id="security">
+  <div class="grid"></div>
+  <div class="inner">
+    <div class="eyebrow mono rv">Trust architecture</div>
+    <div class="split">
+      <h2 class="rv">Private leverage, <em>not rented dependency.</em></h2>
+      <p class="body rv">Your operating data should become an asset, not an exposure. We favor
+         sovereign infrastructure, bounded access, auditability, and systems that make judgment
+         stronger without making ownership weaker.</p>
+    </div>
+  </div>
+</section>
+
+<div class="contact">
+  <div class="eyebrow mono rv">Contact</div>
+  <a class="mailto rv" href="mailto:socialmedia@pushingcap.com">socialmedia@pushingcap.com</a>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:9px;">
+    <svg viewBox="0 0 32 32" fill="none" style="width:14px;height:14px">
+      <rect x="3" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="10" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="17" y="10" width="3.6" height="12" rx="1.2" fill="#6d756f"/>
+      <rect x="24" y="4" width="3.6" height="24" rx="1.2" fill="#82e6c6"/>
+    </svg>pushingCapital © 2026 // Laguna Beach, CA
+  </div>
+  <div class="flinks">
+    <a href="/terms.html">Terms</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/data-deletion.html">Data Deletion</a>
+    <a href="https://www.instagram.com/pushingcapital/">Instagram</a>
+    <a href="https://www.tiktok.com/@pushingcapital">TikTok</a>
+    <a href="https://www.youtube.com/@pushingcapital">YouTube</a>
+    <a href="https://x.com/pushingcapital">X</a>
+    <a href="mailto:socialmedia@pushingcap.com">socialmedia@pushingcap.com</a>
+  </div>
+</footer>
+
+<script>
+  /* hero video: muted autoplay is permitted everywhere, but some browsers defer
+     it while the tab is hidden — nudge it, and retry on the first gesture. */
+  (function(){
+    var v = document.querySelector('.hero video'); if(!v) return;
+    function go(){ var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+    go();
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
+    ['pointerdown','keydown','scroll'].forEach(function(e){
+      window.addEventListener(e, go, {once:true, passive:true});
+    });
+  })();
+
+  /* scroll reveals */
+  (function(){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:.18, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv, .rail, .hero').forEach(function(el){ io.observe(el); });
+  })();
+
+  /* nav gains a backdrop once you leave the hero */
+  (function(){
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function(){
+      nav.classList.toggle('stuck', window.scrollY > 40);
+    }, {passive:true});
+  })();
+</script>
