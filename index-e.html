@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>pushingCapital | Strategic Operating Intelligence — Option E</title>
+<title>pushingCapital | Strategic Operating Intelligence — Option F</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -194,32 +194,29 @@
 </style>
 
 <style>
-  /* ── OPTION E: the VIN plate — macro, die-stamped steel.
-        The plate is lit from the left, so the copy sits RIGHT where the metal
-        falls away into shadow. Only the hero flips; everything below the fold
-        is identical to A. ── */
+  /* ── OPTION F: the objects, connected.
+        The cluster rotates right across the frame, so no edge of the footage
+        stays dark. Instead of drowning it in a scrim, the film gets its own
+        panel on the right and feathers into black; the copy keeps solid
+        ground on the left. ── */
+  .hero video{
+    left:auto; right:0; width:64%;
+    -webkit-mask-image:linear-gradient(to right, transparent 0%, #000 26%, #000 100%);
+            mask-image:linear-gradient(to right, transparent 0%, #000 26%, #000 100%);}
   .hero .veil{
     background:
-      linear-gradient(to left, rgba(2,4,3,.74) 0%, rgba(2,4,3,.48) 32%, rgba(2,4,3,.14) 62%, rgba(2,4,3,0) 82%),
-      linear-gradient(to bottom, rgba(2,4,3,.80), transparent 20%, transparent 60%, var(--bg));}
-  .hero .inner{display:flex;flex-direction:column;align-items:flex-end;text-align:right;}
-  .hero h1{max-width:14ch;}
-  .hero .sub{max-width:46ch;}
-  .hero .pillars{max-width:640px;width:100%;}
-  .hero .pillars div{text-align:right;padding:16px 0 0 18px;}
-  .hero .pillars div::before{left:auto;right:0;}
-  .hero.in .pillars div::before{width:82%;background:var(--gold);}
-  .scrollcue{left:auto;right:var(--gut);}
-  .scrollcue i{transform-origin:right;}
+      linear-gradient(to right, rgba(2,4,3,.96) 0%, rgba(2,4,3,.70) 26%, rgba(2,4,3,.10) 48%, rgba(2,4,3,0) 62%),
+      linear-gradient(to bottom, rgba(2,4,3,.70), transparent 18%, transparent 66%, var(--bg));}
+  .hero h1{max-width:13ch;}
+  .hero .sub{max-width:40ch;}
+  .hero .pillars{max-width:520px;}
   @media(max-width:900px){
-    .hero .inner{align-items:flex-start;text-align:left;}
-    .hero .pillars div{text-align:left;padding:16px 18px 0 0;}
-    .hero .pillars div::before{right:auto;left:0;}
-    .scrollcue{right:auto;left:var(--gut);}
+    .hero video{left:0;right:auto;width:100%;
+      -webkit-mask-image:none; mask-image:none;}
     .hero .veil{background:
-      linear-gradient(to bottom, rgba(2,4,3,.90) 0%, rgba(2,4,3,.56) 34%,
-                      rgba(2,4,3,.74) 74%, var(--bg) 100%),
-      linear-gradient(rgba(2,4,3,.30), rgba(2,4,3,.30));}
+      linear-gradient(to bottom, rgba(2,4,3,.92) 0%, rgba(2,4,3,.60) 34%,
+                      rgba(2,4,3,.76) 74%, var(--bg) 100%),
+      linear-gradient(rgba(2,4,3,.34), rgba(2,4,3,.34));}
   }
 </style>
 
@@ -242,7 +239,7 @@
 </nav>
 
 <div class="hero" id="hero">
-  <video src="media/hero-vin.mp4" poster="media/hero-vin-poster.jpg"
+  <video src="media/hero-objects.mp4" poster="media/hero-objects-poster.jpg"
          autoplay muted loop playsinline preload="auto"></video>
   <div class="veil"></div>
   <div class="inner">
