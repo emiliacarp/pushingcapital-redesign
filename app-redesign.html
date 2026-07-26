@@ -1,0 +1,634 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pushingSecurity — app redesign, three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#020403; --soft:#070b0a; --text:#f6f7f4; --muted:#a2aaa3; --dim:#6d756f;
+    --mint:#82e6c6; --gold:#d7bc73; --red:#e0715f;
+    --line:rgba(246,247,244,.13);
+    --gut:clamp(22px,4.4vw,64px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:Geist,system-ui,sans-serif;
+       -webkit-font-smoothing:antialiased;}
+  .mono{font-family:"Geist Mono",ui-monospace,monospace;}
+  em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;}
+
+  header{padding:clamp(48px,7vw,92px) var(--gut) clamp(24px,3vw,40px);max-width:1400px;margin:0 auto;}
+  .eyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin-bottom:24px;}
+  h1{font-size:clamp(30px,4.4vw,58px);line-height:1.04;letter-spacing:-.036em;font-weight:500;max-width:19ch;}
+  .lede{margin-top:24px;font-size:clamp(15px,1.3vw,18px);line-height:1.62;color:var(--muted);max-width:66ch;font-weight:300;}
+  .lede b{color:var(--text);font-weight:500;}
+
+  section{max-width:1400px;margin:0 auto;padding:0 var(--gut) clamp(60px,7vw,100px);}
+  .diag{margin-top:44px;border:1px solid var(--line);background:var(--soft);}
+  .diag h2{font-size:15px;font-weight:500;letter-spacing:-.01em;padding:20px 24px;
+           border-bottom:1px solid var(--line);}
+  .diag ul{list-style:none;}
+  .diag li{display:grid;grid-template-columns:190px 1fr;gap:20px;padding:16px 24px;
+           border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.6;}
+  .diag li:last-child{border-bottom:0;}
+  .diag li b{color:var(--gold);font-weight:500;font-family:"Geist Mono",monospace;font-size:12px;
+             letter-spacing:.02em;}
+  .diag li span{color:var(--muted);font-weight:300;}
+  .diag li span i{color:var(--text);font-style:normal;}
+
+  .dir{border-top:1px solid var(--line);padding-top:clamp(50px,6vw,80px);margin-top:clamp(40px,5vw,70px);}
+  .dirhead{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,80px);align-items:end;}
+  .dirhead h2{font-size:clamp(26px,3.6vw,48px);line-height:1.06;letter-spacing:-.034em;font-weight:500;max-width:16ch;}
+  .dirhead .n{font-size:10px;letter-spacing:.28em;color:var(--gold);margin-bottom:18px;}
+  .dirhead p{font-size:15.5px;line-height:1.62;color:var(--muted);font-weight:300;padding-bottom:.3em;}
+  .traits{margin-top:26px;display:flex;gap:8px;flex-wrap:wrap;}
+  .traits span{border:1px solid var(--line);padding:6px 12px;font-size:10.5px;letter-spacing:.14em;
+               text-transform:uppercase;color:var(--dim);font-family:"Geist Mono",monospace;}
+
+  .screens{margin-top:46px;display:flex;gap:clamp(20px,2.6vw,40px);flex-wrap:wrap;}
+  .phonewrap{flex:0 0 auto;}
+  .caption{margin-top:14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+           color:var(--dim);font-family:"Geist Mono",monospace;}
+  .phone{width:322px;height:706px;border-radius:38px;padding:9px;background:#191c1b;
+         box-shadow:0 30px 70px rgba(0,0,0,.55);flex:0 0 auto;}
+  .scr{width:100%;height:100%;border-radius:30px;overflow:hidden;position:relative;
+       display:flex;flex-direction:column;}
+  .scr .body{flex:1;overflow:hidden;}
+  .notch{height:26px;display:flex;align-items:center;justify-content:space-between;
+         padding:0 18px;font-size:10px;font-weight:600;letter-spacing:.02em;flex:0 0 auto;}
+
+  /* ══ shared tiny icons ══ */
+  svg.i{width:16px;height:16px;stroke-width:1.6;fill:none;stroke:currentColor;
+        stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;}
+
+  /* ════════ A · LEDGER ════════ */
+  .A{background:#FAF7F1;color:#151109;font-family:Geist,sans-serif;}
+  .A .notch{color:#151109;}
+  .A .pad{padding:18px 20px;}
+  .A .kick{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#8d8577;
+           font-family:"Geist Mono",monospace;}
+  .A h3{font-size:25px;letter-spacing:-.03em;font-weight:500;margin-top:8px;line-height:1.1;}
+  .A .verdict{margin-top:18px;border:1px solid #E2DCD0;background:#fff;}
+  .A .vtop{padding:16px 18px 14px;border-bottom:1px solid #EFEAE0;}
+  .A .vrow{display:flex;justify-content:space-between;align-items:baseline;}
+  .A .vlab{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8d8577;
+           font-family:"Geist Mono",monospace;}
+  .A .vnum{font-size:34px;letter-spacing:-.04em;font-weight:500;font-variant-numeric:tabular-nums;}
+  .A .vnum s{text-decoration:none;font-size:15px;color:#8d8577;}
+  .A .bar{margin-top:12px;height:3px;background:#EFEAE0;position:relative;}
+  .A .bar i{position:absolute;left:0;top:0;bottom:0;background:#1F6B4E;}
+  .A .vfoot{padding:12px 18px;font-size:12px;color:#5f594e;line-height:1.5;}
+  .A .vfoot b{color:#151109;font-weight:500;}
+  .A .blocklist{margin-top:16px;border-top:1px solid #E2DCD0;}
+  .A .blk{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #EFEAE0;}
+  .A .blk .dot{width:6px;height:6px;border-radius:50%;background:#C8792F;margin-top:5px;flex:0 0 auto;}
+  .A .blk .dot.ok{background:#1F6B4E;}
+  .A .blk .t{font-size:13.5px;font-weight:500;letter-spacing:-.008em;}
+  .A .blk .s{font-size:12px;color:#7d766a;margin-top:3px;line-height:1.45;}
+  .A .blk .cta{margin-left:auto;font-size:11px;font-family:"Geist Mono",monospace;color:#1F6B4E;
+               letter-spacing:.06em;white-space:nowrap;padding-top:2px;}
+  .A .tabbar{border-top:1px solid #E2DCD0;background:#fff;display:flex;padding:9px 6px 12px;flex:0 0 auto;}
+  .A .tabbar div{flex:1;text-align:center;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+                 color:#9c9488;font-family:"Geist Mono",monospace;display:flex;flex-direction:column;
+                 align-items:center;gap:5px;}
+  .A .tabbar div.on{color:#151109;}
+  .A .lrow{display:flex;justify-content:space-between;align-items:center;padding:14px 0;
+           border-bottom:1px solid #EFEAE0;}
+  .A .lrow .t{font-size:13.5px;font-weight:400;}
+  .A .lrow .v{font-size:13px;font-variant-numeric:tabular-nums;color:#151109;font-weight:500;}
+  .A .lrow .v.mut{color:#a09889;font-weight:400;}
+  .A .seal{margin-top:16px;background:#151109;color:#F7F3EA;padding:14px 16px;
+           display:flex;gap:11px;align-items:center;}
+  .A .seal .t{font-size:12px;line-height:1.45;}
+  .A .seal .t b{font-weight:500;}
+
+  /* ════════ B · OPERATOR ════════ */
+  .B{background:#07090A;color:#E9EEEB;font-family:Geist,sans-serif;}
+  .B .notch{color:#E9EEEB;}
+  .B .pad{padding:16px 18px;}
+  .B .kick{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#5d6a64;
+           font-family:"Geist Mono",monospace;}
+  .B h3{font-size:22px;letter-spacing:-.028em;font-weight:500;margin-top:7px;}
+  .B .status{margin-top:16px;border:1px solid rgba(233,238,235,.12);}
+  .B .stop{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+           border-bottom:1px solid rgba(233,238,235,.10);}
+  .B .pill{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px;
+           font-family:"Geist Mono",monospace;border:1px solid;}
+  .B .pill.warn{color:#E0A05F;border-color:rgba(224,160,95,.4);}
+  .B .pill.ok{color:#82E6C6;border-color:rgba(130,230,198,.4);}
+  .B .gauge{padding:18px 16px 16px;display:flex;gap:14px;align-items:flex-end;}
+  .B .gauge .big{font-size:44px;line-height:.9;letter-spacing:-.05em;font-weight:500;
+                 font-variant-numeric:tabular-nums;}
+  .B .gauge .of{font-size:12px;color:#69756f;padding-bottom:5px;font-family:"Geist Mono",monospace;}
+  .B .spark{flex:1;display:flex;align-items:flex-end;gap:3px;height:38px;}
+  .B .spark i{flex:1;background:rgba(130,230,198,.22);}
+  .B .spark i.hi{background:#82E6C6;}
+  .B .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(233,238,235,.12);
+            border:1px solid rgba(233,238,235,.12);margin-top:14px;}
+  .B .g{background:#07090A;padding:13px 14px 15px;}
+  .B .g .k{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#5d6a64;
+           font-family:"Geist Mono",monospace;}
+  .B .g .v{margin-top:9px;font-size:19px;font-weight:500;letter-spacing:-.028em;
+           font-variant-numeric:tabular-nums;}
+  .B .g .v.pend{color:#69756f;font-size:13px;font-weight:400;}
+  .B .queue{margin-top:16px;}
+  .B .qh{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#5d6a64;
+         font-family:"Geist Mono",monospace;padding-bottom:9px;
+         border-bottom:1px solid rgba(233,238,235,.12);}
+  .B .q{display:flex;gap:11px;align-items:center;padding:10px 0;
+        border-bottom:1px solid rgba(233,238,235,.08);}
+  .B .q .idx{font-size:10px;color:#4d5a54;font-family:"Geist Mono",monospace;width:16px;flex:0 0 auto;}
+  .B .q .t{font-size:13px;font-weight:400;}
+  .B .q .s{font-size:11px;color:#69756f;margin-top:2px;}
+  .B .q .go{margin-left:auto;color:#82E6C6;}
+  .B .tabbar{border-top:1px solid rgba(233,238,235,.12);display:flex;padding:9px 6px 12px;
+             background:#050707;flex:0 0 auto;}
+  .B .tabbar div{flex:1;text-align:center;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+                 color:#5d6a64;font-family:"Geist Mono",monospace;display:flex;flex-direction:column;
+                 align-items:center;gap:5px;}
+  .B .tabbar div.on{color:#82E6C6;}
+  .B .askbar{margin:14px 18px 0;border:1px solid rgba(130,230,198,.28);padding:11px 14px;
+             display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8b968f;}
+  .B .askbar b{color:#82E6C6;font-family:"Geist Mono",monospace;font-size:11px;letter-spacing:.1em;}
+
+  /* ════════ C · CONCIERGE ════════ */
+  .C{background:#F4F2EE;color:#111214;font-family:Geist,sans-serif;}
+  .C .notch{color:#111214;}
+  .C .top{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .C .top .who{display:flex;align-items:center;gap:9px;}
+  .C .av{width:26px;height:26px;border-radius:50%;background:#111214;color:#F4F2EE;
+         display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;}
+  .C .top .nm{font-size:13px;font-weight:600;letter-spacing:-.01em;}
+  .C .top .st{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a86;
+              font-family:"Geist Mono",monospace;}
+  .C .thread{padding:6px 18px 0;display:flex;flex-direction:column;gap:12px;}
+  .C .msg{max-width:88%;font-size:13.5px;line-height:1.5;padding:11px 14px;border-radius:14px;}
+  .C .msg.p{background:#fff;border:1px solid #E4E1DA;border-bottom-left-radius:4px;}
+  .C .msg.me{background:#111214;color:#F4F2EE;align-self:flex-end;border-bottom-right-radius:4px;}
+  .C .inl{margin-top:2px;border:1px solid #E4E1DA;background:#fff;border-radius:14px;overflow:hidden;}
+  .C .inl .h{padding:11px 14px 9px;border-bottom:1px solid #EFEDE7;display:flex;
+             justify-content:space-between;align-items:center;}
+  .C .inl .h b{font-size:11.5px;font-weight:600;letter-spacing:.01em;}
+  .C .inl .h s{text-decoration:none;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+               color:#8a8a86;font-family:"Geist Mono",monospace;}
+  .C .inl .r{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;
+             border-bottom:1px solid #F2F0EA;font-size:12.5px;}
+  .C .inl .r:last-child{border-bottom:0;}
+  .C .inl .r .st{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+                 font-family:"Geist Mono",monospace;}
+  .C .inl .r .st.need{color:#B4661F;}
+  .C .inl .r .st.done{color:#1F6B4E;}
+  .C .chips{display:flex;gap:7px;flex-wrap:wrap;padding:14px 18px 0;}
+  .C .chip{border:1px solid #DAD6CE;background:#fff;padding:8px 13px;border-radius:999px;
+           font-size:12px;color:#3d3d3a;}
+  .C .composer{margin-top:auto;padding:12px 16px 14px;border-top:1px solid #E4E1DA;background:#fff;
+               display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .C .composer .box{flex:1;border:1px solid #DAD6CE;border-radius:999px;padding:10px 15px;
+                    font-size:13px;color:#9b9b96;}
+  .C .composer .send{width:34px;height:34px;border-radius:50%;background:#111214;color:#fff;
+                     display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .C .drawer{padding:12px 18px 0;}
+  .C .dh{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#8a8a86;
+         font-family:"Geist Mono",monospace;}
+  .C .dgrid{margin-top:11px;display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .C .d{background:#fff;border:1px solid #E4E1DA;border-radius:14px;padding:13px 14px 15px;}
+  .C .d .k{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a86;
+           font-family:"Geist Mono",monospace;}
+  .C .d .v{margin-top:8px;font-size:17px;font-weight:600;letter-spacing:-.024em;}
+  .C .d .s{margin-top:4px;font-size:11.5px;color:#7c7c78;line-height:1.4;}
+
+  .foot{max-width:1400px;margin:0 auto;padding:26px var(--gut) 70px;border-top:1px solid var(--line);
+        font-size:12px;color:var(--dim);line-height:1.9;}
+
+  @media(max-width:900px){ .dirhead{grid-template-columns:1fr;gap:20px;align-items:start;}
+    .diag li{grid-template-columns:1fr;gap:5px;} }
+</style>
+
+<header>
+  <div class="eyebrow mono">pushingSecurity · app redesign</div>
+  <h1>Three ways to build it <em>like somebody meant it.</em></h1>
+  <p class="lede">Same product, same features, same data. What changes is the thinking underneath —
+     a real type scale, a real grid, purposeful colour, and a home screen that answers a question
+     instead of decorating one. <b>Every screen below uses real content from the live app.</b></p>
+</header>
+
+<section>
+  <div class="diag">
+    <h2>First, why the current build reads as generated</h2>
+    <ul>
+      <li><b>4 typefaces</b><span>Public Sans, Bricolage Grotesque and Spline Sans Mono are all loaded — and <i>Times</i> is rendering somewhere, which means at least one element has no font assigned at all. Designed systems use two, maybe three, on purpose.</span></li>
+      <li><b>9 type sizes, no scale</b><span>8, 9, 12, 14, 15, 16, 20, 40, 62px. There is no ratio between them, 14 and 15 do two versions of one job, and <i>8px and 9px are below the readable minimum</i> on a phone.</span></li>
+      <li><b>4 corner radii</b><span>10px, 16px, 38px and 50% all in one screen. Radius is a brand signature; four of them is four brands.</span></li>
+      <li><b>Emoji as iconography</b><span>🤖 and 🔒 are doing the work of an icon set. They render differently on every device and cannot be coloured, sized or aligned.</span></li>
+      <li><b>A decorative home</b><span>The orbiting circle hub is the first thing a client sees. It shows six destinations and <i>zero information</i> — not where they stand, not what is blocking them, not what happens next. It also cannot grow: a seventh destination breaks the ring.</span></li>
+      <li><b>Empty states that end</b><span>"Your secure document store is empty" describes a condition and offers no way out of it. Every empty state is a chance to start the thing it is empty of.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════ DIRECTION A ══════════ -->
+<section class="dir">
+  <div class="dirhead">
+    <div>
+      <div class="n mono">Direction A</div>
+      <h2>The Ledger</h2>
+    </div>
+    <p>Keeps the warm paper feel the app already has, and gives it discipline. One serif-free type
+       scale, hairline rules instead of floating cards, tabular numerals, and a single green that
+       only ever means "verified". It reads like a private bank's statement — calm, exact, and
+       nothing on screen that is not load-bearing.</p>
+  </div>
+  <div class="traits mono"><span>Lowest risk</span><span>Evolves what exists</span><span>Reads as trustworthy</span></div>
+
+  <div class="screens">
+    <div class="phonewrap"><div class="phone"><div class="scr A">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">Tuesday · your file</div>
+          <h3>You are three items from ready.</h3>
+          <div class="verdict">
+            <div class="vtop">
+              <div class="vrow"><span class="vlab">Lender readiness</span><span class="vlab">RDS</span></div>
+              <div class="vrow" style="margin-top:6px;">
+                <span class="vnum">68<s> / 100</s></span>
+                <span class="vlab" style="color:#C8792F;">Near ready</span>
+              </div>
+              <div class="bar"><i style="width:68%"></i></div>
+            </div>
+            <div class="vfoot">Clear the three items below and your file moves to <b>Ready</b> — the
+              band where prime lenders will look at it.</div>
+          </div>
+          <div class="blocklist">
+            <div class="blk"><span class="dot"></span><div><div class="t">Two months of pay stubs</div>
+              <div class="s">Needed to verify qualifying monthly income</div></div><span class="cta">UPLOAD</span></div>
+            <div class="blk"><span class="dot"></span><div><div class="t">Credit pull authorisation</div>
+              <div class="s">Three-bureau, run once by your team</div></div><span class="cta">AUTHORISE</span></div>
+            <div class="blk"><span class="dot"></span><div><div class="t">Proof of insurance</div>
+              <div class="s">On the 2019 Silverado</div></div><span class="cta">UPLOAD</span></div>
+            <div class="blk"><span class="dot ok"></span><div><div class="t">Identity verified</div>
+              <div class="s">Confirmed 14 March</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>File</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>Ask P</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>You</div>
+      </div>
+    </div></div><div class="caption">A · Home — a verdict, not a menu</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr A">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">The record</div>
+          <h3>What lenders will see.</h3>
+          <div style="margin-top:18px;">
+            <div class="lrow"><span class="t">Qualifying monthly income</span><span class="v">$9,420</span></div>
+            <div class="lrow"><span class="t">Verified sources</span><span class="v">3 of 4</span></div>
+            <div class="lrow"><span class="t">Debt-to-income</span><span class="v">31%</span></div>
+            <div class="lrow"><span class="t">Credit, mid score</span><span class="v mut">Awaiting pull</span></div>
+            <div class="lrow"><span class="t">Vehicles on file</span><span class="v">2</span></div>
+            <div class="lrow"><span class="t">Property equity</span><span class="v">$148,000</span></div>
+          </div>
+          <div class="seal">
+            <svg class="i" style="width:18px;height:18px;color:#C9B27C;" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <div class="t"><b>Sealed in the vault.</b> Encrypted end to end. Only you and your named
+              operator can open it.</div>
+          </div>
+          <div class="kick" style="margin-top:20px;">Completeness</div>
+          <div class="bar" style="margin-top:9px;"><i style="width:81%"></i></div>
+          <div class="vfoot" style="padding:9px 0 0;">81% complete — income and identity done, credit
+            outstanding.</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>File</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>Ask P</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>You</div>
+      </div>
+    </div></div><div class="caption">A · The record — one column, tabular</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr A">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">Deal · 2019 Silverado</div>
+          <h3>With the lender.</h3>
+          <div class="verdict" style="margin-top:16px;">
+            <div class="vtop" style="padding-bottom:16px;">
+              <div class="vrow"><span class="vlab">Submitted</span><span class="vlab">Day 3</span></div>
+              <div style="display:flex;gap:5px;margin-top:12px;">
+                <div style="flex:1;height:3px;background:#1F6B4E;"></div>
+                <div style="flex:1;height:3px;background:#1F6B4E;"></div>
+                <div style="flex:1;height:3px;background:#1F6B4E;"></div>
+                <div style="flex:1;height:3px;background:#E2DCD0;"></div>
+                <div style="flex:1;height:3px;background:#E2DCD0;"></div>
+              </div>
+              <div class="vfoot" style="padding:11px 0 0;">Intake · Documents · Submitted ·
+                <b style="color:#a09889;">Decision</b> · Funding</div>
+            </div>
+            <div class="vfoot"><b>Nothing needed from you.</b> Your operator is with the lender.
+              Expect a decision within two business days.</div>
+          </div>
+          <div class="kick" style="margin-top:22px;">The money</div>
+          <div style="margin-top:6px;">
+            <div class="lrow"><span class="t">Requested</span><span class="v">$38,500</span></div>
+            <div class="lrow"><span class="t">Deal jacket fee</span><span class="v">$425</span></div>
+            <div class="lrow"><span class="t">Paid</span><span class="v">$425</span></div>
+            <div class="lrow"><span class="t">Outstanding</span><span class="v mut">$0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>File</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>Ask P</div>
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>You</div>
+      </div>
+    </div></div><div class="caption">A · Deal — status as a spine</div></div>
+  </div>
+</section>
+
+<!-- ══════════ DIRECTION B ══════════ -->
+<section class="dir">
+  <div class="dirhead">
+    <div>
+      <div class="n mono">Direction B</div>
+      <h2>The Operator</h2>
+    </div>
+    <p>Takes the parent brand — near-black, mint, mono numerals — and builds the app in it, so
+       pushingCapital and pushingSecurity are visibly one company. Dense, instrumented, status
+       first. This is the direction that makes a dealer principal feel like they have been handed
+       a professional tool rather than a consumer app.</p>
+  </div>
+  <div class="traits mono"><span>On brand with the parent</span><span>Highest information density</span><span>Best for repeat operators</span></div>
+
+  <div class="screens">
+    <div class="phonewrap"><div class="phone"><div class="scr B">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">File status</div>
+          <h3>Near ready</h3>
+          <div class="status">
+            <div class="stop"><span class="kick">Readiness · RDS</span><span class="pill warn mono">3 blocking</span></div>
+            <div class="gauge">
+              <div><div class="big">68</div></div>
+              <div class="of">/100</div>
+              <div class="spark">
+                <i style="height:34%"></i><i style="height:38%"></i><i style="height:36%"></i>
+                <i style="height:47%"></i><i style="height:52%"></i><i style="height:51%"></i>
+                <i class="hi" style="height:68%"></i>
+              </div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="g"><div class="k">Completeness</div><div class="v">81%</div></div>
+            <div class="g"><div class="k">DTI</div><div class="v">31%</div></div>
+            <div class="g"><div class="k">Qualifying income</div><div class="v">$9,420</div></div>
+            <div class="g"><div class="k">Mid score</div><div class="v pend">Awaiting pull</div></div>
+          </div>
+          <div class="queue">
+            <div class="qh">Blocking · in order</div>
+            <div class="q"><span class="idx">01</span><div><div class="t">Pay stubs · 2 months</div>
+              <div class="s">Verifies qualifying income</div></div>
+              <svg class="i go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+            <div class="q"><span class="idx">02</span><div><div class="t">Credit pull authorisation</div>
+              <div class="s">Three-bureau · run once</div></div>
+              <svg class="i go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+            <div class="q"><span class="idx">03</span><div><div class="t">Proof of insurance</div>
+              <div class="s">2019 Silverado</div></div>
+              <svg class="i go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+        </div>
+        <div class="askbar"><b class="mono">ASK P</b><span>“what's holding up my file?”</span></div>
+      </div>
+      <div class="tabbar">
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>Status</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Inbox</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>P</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div><svg class="i" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Vault</div>
+      </div>
+    </div></div><div class="caption">B · Status — instrumented, ranked</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr B">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">Vault</div>
+          <h3>Sealed</h3>
+          <div class="status" style="margin-top:16px;">
+            <div class="stop"><span class="kick">Encryption</span><span class="pill ok mono">End to end</span></div>
+            <div style="padding:14px 16px;font-size:12.5px;color:#8b968f;line-height:1.55;">
+              14 documents extracted into structured fields. 2 lender portals connected. Nothing here
+              leaves without your key.
+            </div>
+          </div>
+          <div class="queue">
+            <div class="qh">Extracted</div>
+            <div class="q"><span class="idx">PDF</span><div><div class="t">Bank statement · Feb</div>
+              <div class="s">42 lines tabulated · balance, payments, interest</div></div></div>
+            <div class="q"><span class="idx">PDF</span><div><div class="t">W-2 · 2025</div>
+              <div class="s">Employer, gross, withholding</div></div></div>
+            <div class="q"><span class="idx">JPG</span><div><div class="t">Driver's licence</div>
+              <div class="s">Identity confirmed 14 March</div></div></div>
+          </div>
+          <div class="queue" style="margin-top:18px;">
+            <div class="qh">Connected</div>
+            <div class="q"><span class="idx">01</span><div><div class="t">Westlake portal</div>
+              <div class="s">Credentials sealed · revoke any time</div></div></div>
+            <div class="q"><span class="idx">02</span><div><div class="t">QuickBooks</div>
+              <div class="s">Live financials · read only</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>Status</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Inbox</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>P</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Vault</div>
+      </div>
+    </div></div><div class="caption">B · Vault — proof, not an empty box</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr B">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="body">
+        <div class="pad">
+          <div class="kick">Deals · 2 live</div>
+          <h3>Where you stand</h3>
+          <div class="status" style="margin-top:16px;">
+            <div class="stop"><span style="font-size:13px;">2019 Silverado</span><span class="pill ok mono">With lender</span></div>
+            <div style="padding:15px 16px;">
+              <div style="display:flex;gap:4px;">
+                <div style="flex:1;height:3px;background:#82E6C6;"></div>
+                <div style="flex:1;height:3px;background:#82E6C6;"></div>
+                <div style="flex:1;height:3px;background:#82E6C6;"></div>
+                <div style="flex:1;height:3px;background:rgba(233,238,235,.16);"></div>
+                <div style="flex:1;height:3px;background:rgba(233,238,235,.16);"></div>
+              </div>
+              <div style="margin-top:11px;font-size:11.5px;color:#69756f;" class="mono">
+                INTAKE · DOCS · SUBMITTED · <span style="color:#E9EEEB;">DECISION</span> · FUNDING</div>
+              <div style="margin-top:12px;font-size:12.5px;color:#8b968f;line-height:1.5;">
+                Nothing needed from you. Decision expected in 2 business days.</div>
+            </div>
+          </div>
+          <div class="status" style="margin-top:12px;">
+            <div class="stop"><span style="font-size:13px;">Trade-in · 2016 Transit</span><span class="pill warn mono">Needs you</span></div>
+            <div style="padding:15px 16px;font-size:12.5px;color:#8b968f;line-height:1.5;">
+              Title not on file. Upload it and the payoff quote goes out the same day.</div>
+          </div>
+          <div class="queue" style="margin-top:18px;">
+            <div class="qh">Billing</div>
+            <div class="q"><span class="idx">✓</span><div><div class="t">Deal jacket · near-prime</div>
+              <div class="s">Paid 12 March</div></div><span style="margin-left:auto;font-size:12.5px;">$425</span></div>
+            <div class="q"><span class="idx">—</span><div><div class="t">Outstanding</div>
+              <div class="s">Nothing due</div></div><span style="margin-left:auto;font-size:12.5px;color:#69756f;">$0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>Status</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Inbox</div>
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>P</div>
+        <div class="on"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Deals</div>
+        <div><svg class="i" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Vault</div>
+      </div>
+    </div></div><div class="caption">B · Deals — two live, one needs you</div></div>
+  </div>
+</section>
+
+<!-- ══════════ DIRECTION C ══════════ -->
+<section class="dir">
+  <div class="dirhead">
+    <div>
+      <div class="n mono">Direction C</div>
+      <h2>The Concierge</h2>
+    </div>
+    <p>Stops pretending the app is a dashboard. P opens first, and everything else — readiness,
+       documents, deals, services — arrives inside the conversation as structured cards you can act
+       on. The boldest of the three, and the one that matches what the product actually is: a
+       person you can ask, backed by a file.</p>
+  </div>
+  <div class="traits mono"><span>Most differentiated</span><span>Lowest learning curve</span><span>Biggest build</span></div>
+
+  <div class="screens">
+    <div class="phonewrap"><div class="phone"><div class="scr C">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="top">
+        <div class="who"><div class="av">P</div>
+          <div><div class="nm">P</div><div class="st mono">Reading your file</div></div></div>
+        <div class="st mono">14 left today</div>
+      </div>
+      <div class="body">
+        <div class="thread">
+          <div class="msg p">Morning, Emilia. Your file moved to <b>Near ready</b> overnight — the
+            income review came back clean.</div>
+          <div class="inl">
+            <div class="h"><b>Three things are blocking you</b><s class="mono">RDS 68</s></div>
+            <div class="r"><span>Pay stubs · 2 months</span><span class="st need mono">Needed</span></div>
+            <div class="r"><span>Credit pull authorisation</span><span class="st need mono">Needed</span></div>
+            <div class="r"><span>Proof of insurance</span><span class="st need mono">Needed</span></div>
+            <div class="r"><span>Identity</span><span class="st done mono">Verified</span></div>
+          </div>
+          <div class="msg me">what happens when those are in?</div>
+          <div class="msg p">You cross into <b>Ready</b>, which is the band prime lenders look at.
+            On your numbers I would expect three matches.</div>
+        </div>
+        <div class="chips">
+          <div class="chip">Upload stubs</div>
+          <div class="chip">Authorise pull</div>
+          <div class="chip">Show my deals</div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="box">Ask anything about your file…</div>
+        <div class="send"><svg class="i" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+      </div>
+    </div></div><div class="caption">C · P opens first, file inline</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr C">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="top">
+        <div class="who"><div class="av">P</div>
+          <div><div class="nm">P</div><div class="st mono">Deal · Silverado</div></div></div>
+        <div class="st mono">Pro</div>
+      </div>
+      <div class="body">
+        <div class="thread">
+          <div class="msg me">where's my loan?</div>
+          <div class="msg p">With the lender since Friday. Day 3 of a typical 5.</div>
+          <div class="inl">
+            <div class="h"><b>2019 Silverado</b><s class="mono">$38,500</s></div>
+            <div class="r"><span>Intake</span><span class="st done mono">Done</span></div>
+            <div class="r"><span>Documents</span><span class="st done mono">Done</span></div>
+            <div class="r"><span>Submitted</span><span class="st done mono">Fri 14:20</span></div>
+            <div class="r"><span>Decision</span><span class="st need mono">Waiting</span></div>
+          </div>
+          <div class="msg p">Nothing is needed from you. I will message you the moment it lands —
+            and I can chase your operator if you want it pushed.</div>
+        </div>
+        <div class="chips">
+          <div class="chip">Chase it</div>
+          <div class="chip">Show the numbers</div>
+          <div class="chip">Book a call</div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="box">Ask anything about your file…</div>
+        <div class="send"><svg class="i" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+      </div>
+    </div></div><div class="caption">C · A deal, answered not navigated</div></div>
+
+    <div class="phonewrap"><div class="phone"><div class="scr C">
+      <div class="notch mono"><span>9:41</span><span>▮▮▮</span></div>
+      <div class="top">
+        <div class="who"><div class="av">E</div>
+          <div><div class="nm">Your file</div><div class="st mono">81% complete</div></div></div>
+        <div class="st mono">Vault sealed</div>
+      </div>
+      <div class="body">
+        <div class="drawer">
+          <div class="dh">Where you stand</div>
+          <div class="dgrid">
+            <div class="d"><div class="k">Readiness</div><div class="v">68 / 100</div>
+              <div class="s">Near ready · 3 blocking</div></div>
+            <div class="d"><div class="k">Qualifying income</div><div class="v">$9,420</div>
+              <div class="s">3 of 4 sources verified</div></div>
+            <div class="d"><div class="k">Debt to income</div><div class="v">31%</div>
+              <div class="s">Comfortably inside most lenders</div></div>
+            <div class="d"><div class="k">Credit</div><div class="v" style="font-size:13px;color:#7c7c78;">Awaiting pull</div>
+              <div class="s">Authorise and it runs today</div></div>
+          </div>
+          <div class="dh" style="margin-top:20px;">Hand it over</div>
+          <div class="dgrid">
+            <div class="d"><div class="k">Inspection</div><div class="v" style="font-size:14px;">On request</div>
+              <div class="s">Vehicle condition and valuation</div></div>
+            <div class="d"><div class="k">Deal jacket</div><div class="v" style="font-size:14px;">$350–500</div>
+              <div class="s">Priced by buyer FICO</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="box">Ask P about any of this…</div>
+        <div class="send"><svg class="i" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+      </div>
+    </div></div><div class="caption">C · The file, as a drawer behind P</div></div>
+  </div>
+</section>
+
+<div class="foot mono">
+  Static design comps — not a working build. Content is representative, using the live app's own
+  structure, features and published prices.<br>
+  Any figure shown against a person (income, DTI, scores, balances) is illustrative placeholder data.
+</div>
